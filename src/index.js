@@ -5,6 +5,7 @@ const add = document.getElementById("add");
 const minus = document.getElementById("minus");
 const number = document.querySelector("span");
 
+number.innerText = 0;  // 이렇게 초기 설정을 하지않으면 초기에 아무런 숫자도 렌더가 되지않아있을것임
 
 /* 
   !리덕스가 돌아가는 로직.
@@ -15,6 +16,10 @@ const number = document.querySelector("span");
   3. action(값을 변경해주게 함)을 생성 후 store 파라미터에 입력
   4. 위의 action을 store.dispatch({type: "somthing"})를 통해 reducer에 전달하여 값이 변경되게끔 설정.
   5. 이렇게 되면 리듀서를 통해 최종 업데이트 된 값을 store에 저장되고, store에 저장된 최종값을 getState()로 출력.
+  6. subscribe로 innerText와 함께 렌더될 값을 설정
+
+  dispatch: 우리가 store와 커뮤니케이션을 하게 도와줌
+  subscribe: 우리가 변화는 것을 구독하게끔해줌  (69번 줄 참고)
 */
 
 
@@ -24,7 +29,7 @@ const number = document.querySelector("span");
 const countModifier = (count = 0, action) => {  // return 할 count를 파라미터로 넣어주고  // count는 state임!!
   //! action: 여기에 수정할 state들을 입력한 후 아래와 같이 state를 리턴한다.  
   // reducer함수인 countModifier에 action을 어떻게 전달할까? 23번 줄을 보자. 23번처럼 설정 후 아래의 action에 값이 반영이 될 것임.
-  // console.log(action)
+  // console.log(count, action)
   if (action.type === "ADD") {
     return count + 1;
   }
@@ -44,20 +49,44 @@ const countModifier = (count = 0, action) => {  // return 할 count를 파라미
 const countStore = createStore(countModifier);
 
 // reducer함수인 countModifier에 action을 전달하기 위해 store을 사용하여 dispatch로 action을 reducer함수에 보낸다.
-countStore.dispatch({ type: "ADD" })
-countStore.dispatch({ type: "ADD" })
-countStore.dispatch({ type: "ADD" })
-countStore.dispatch({ type: "ADD" })
-countStore.dispatch({ type: "ADD" })
-countStore.dispatch({ type: "MINUS" })
+// countStore.dispatch({ type: "ADD" })
+// countStore.dispatch({ type: "ADD" })
+// countStore.dispatch({ type: "ADD" })
+// countStore.dispatch({ type: "ADD" })
+// countStore.dispatch({ type: "ADD" })
+// countStore.dispatch({ type: "MINUS" })
+
+// 해당 버튼을 누르게 되면 dispatch가 작동해 reducer에 action 의 정의를 전달하게 된다. (-> redecer은 그 action을 토대로 state를 업데이트하고 store에 저장하게 된다.)
+const handleAdd = () => {
+  countStore.dispatch({ type: "ADD" })
+}
+const handleMinus = () => {
+  countStore.dispatch({ type: "MINUS" })
+}
+
+add.addEventListener("click", handleAdd);
+minus.addEventListener("click", handleMinus);
+
+// subscribe : 우리에게 store 안에 있는 변화들을 확인할 수 있게해줌.
+// 이것을 이용해서 바로 innerText로 변화한 값이 즉각 렌더되도록 할 것임.
+const onChange = () => {
+  // console.log("오오옹ㄴ체이이니지지")
+  // console.log(countStore.getState());
+  // 렌더가 될 number를 업데이트 시켜주자!
+  number.innerText = countStore.getState();
+}
+countStore.subscribe(onChange);  // 이렇게 해줘야 onChange의 변경되는 값, 즉 store안에 변경되는 값들을 확인할 수 있음, 안해주면 아무리 onChange함수를 사용하더라도 확인 불가.
+                                // onChange 함수는 store에 변화가 있을 때마다 감지해서 불려지는건데, 이게 subscribe 역할이 큼
+
+
 
 
 // 최종 state 값. (store에 저장된 최근 변경된 값을 출력.)
-console.log(countStore.getState());
+// console.log(countStore.getState());
 
 /*
 
-! 리덕스 적용 전 바닐라 스크립트  --> redux의 reducer에 새롭게 작성될 것임.
+! 리덕스 적용 전 바닐라 스크립트  --> 위와 같이 redux의 reducer에 새롭게 작성될 것임.
 
 let count = 0;
 
