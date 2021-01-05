@@ -30,16 +30,25 @@ const countModifier = (count = 0, action) => {  // return 할 count를 파라미
   //! action: 여기에 수정할 state들을 입력한 후 아래와 같이 state를 리턴한다.  
   // reducer함수인 countModifier에 action을 어떻게 전달할까? 23번 줄을 보자. 23번처럼 설정 후 아래의 action에 값이 반영이 될 것임.
   // console.log(count, action)
-  if (action.type === "ADD") {
-    return count + 1;
+  /* 
+  ? if문 아래에 switch 구문으로 리팩토링 할 것임.
+    if (action.type === "ADD") {
+      return count + 1;
+    }
+    else if (action.type === "MINUS") {
+      return count - 1;
+    }
+    else {
+      return count;
+    } */
+  switch (action.type) {
+    case "ADD":
+      return count + 1;
+    case "MINUS":
+      return count - 1;
+    default:
+      return count;
   }
-  else if (action.type === "MINUS") {
-    return count - 1;
-  }
-  else {
-    return count;
-  }
-
   // // 최종 수정된 값은 아래와 같이 리턴이 되고, 그 값은 store에 저장이 된다.
   // return count;
 };
@@ -109,3 +118,22 @@ const handleMinus = () => {
 
 add.addEventListener("click", handleAdd);
 minus.addEventListener("click", handleMinus);  */
+
+
+
+/*
+  정리
+
+  1. reducer 함수는 현재 상태의 값과 함께 불려지는 function ex) count = 0 혹은 업데이트 된 현재 상태 값.
+  1-1. action과 함께 불려지며, 이는 reducer 함수와 소통하는 도구. 사용법?이라고 생각해도 되겠다.("이 타입의 action은 **을 위한 것이다.")
+  즉, reducer 함수는 current state 와 action이 함께 불려짐.
+  1-2. reducer이 return하는 것은 application의 현재 상태값이 된다.
+
+  2. action 을 reducer에 보내는 방법은 dispatch를 이용한다.
+  2-1. action은 무조건 객체이어야만 한다.
+  2-2. action은 type이 있어야 한다.
+  2-3. dispatch가 리듀서를 불러서 current state(현재 상태값)와 내가 보낸 action을 더해 작동시킨다.
+
+  3. 만약 내가 change를 store에서 감지하고 싶다면, 그 change를 "구독"하면 된다.
+  3-1. onChange 함수를 생성하여 그 안에 innerText를 사용. -> html을 업데이트 할 수 있게 해주는 function
+*/
